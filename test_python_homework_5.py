@@ -1,11 +1,12 @@
 import os
-
-from selene.support.shared import browser
+from selene import browser, have
 from selenium.webdriver import Keys
 
 def test_new_form_homework():
-    browser.config.browser_name = 'firefox'
-    browser.open('https://demoqa.com/automation-practice-form')
+
+    browser.open_url('https://demoqa.com/automation-practice-form')
+
+    ##Заполнение полей
     browser.element('[id="firstName"]').type('Maksim')
     browser.element('[id="lastName"]').type('Samoshin')
     browser.element('[id="userEmail"]').type('boss.samoshin@mail.ru')
@@ -20,4 +21,31 @@ def test_new_form_homework():
 
     browser.element('#subjectsInput').type('Computer Science').press_enter()
     browser.element('[for="hobbies-checkbox-3"]').click()
-    browser.element('#uploadPicture').send_keys(os.getcwd() + '\Desktop\я.jpg')
+
+    ##Загрузка фото
+    browser.element('#uploadPicture').send_keys(os.getcwd() + '/Я.png')
+
+    ##Выбор адреса
+    browser.element('#currentAddress').click().type('Stachek 75')
+
+    ##Выбор штата
+    browser.element('#state').click()
+    browser.element('#react-select-3-option-0').should(have.exact_text('NCR')).click()
+
+    ##Выбор города
+    browser.element('#city').click()
+    browser.element('#react-select-4-option-0').should(have.exact_text('Delhi')).click()
+
+    browser.element('#submit').click()
+
+    ##Проверка
+    browser.all('tbody tr').should(have.texts('Student Name Maksim Samoshin',
+                                                           'Student Email boss.samoshin@mail.ru',
+                                                           'Gender Male',
+                                                           'Mobile 9819740196',
+                                                           'Date of Birth 06 August,1997',
+                                                           'Subjects Computer Science',
+                                                           'Hobbies Music',
+                                                           'Picture Я.png',
+                                                           'Address Stachek 75',
+                                                           'State and City NCR Delhi'))
